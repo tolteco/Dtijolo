@@ -1,13 +1,17 @@
 /*
  * Exemplo de problema com threads usando o descarregamento de tijolos
  */
-package dtijolo;
+package disttijolo;
 
 import entidades.*;
 import java.util.Random;
 import java.util.Scanner;
 
-public class DTijolo {
+/**
+ *
+ * @author Maycon
+ */
+public class DistTijolo {
 
   public static Random randomGenerator;
   public static int qtdetotal;
@@ -59,7 +63,7 @@ public class DTijolo {
         return;
     }
     //Inicia Monitor
-    Monitor M = new Monitor(cam);
+    Supervisor M = new Supervisor(cam);
     Thread b = new Thread(M);
     b.start();
   }

@@ -3,16 +3,17 @@
  */
 package entidades;
 
-import static entidades.Monitor.baixo;
-import static entidades.Monitor.cima;
+import static disttijolo.DistTijolo.randomGenerator;
+import static entidades.Supervisor.baixo;
+import static entidades.Supervisor.cima;
 import java.util.ArrayList;
 
 public class Caminhao {
 
   public ArrayList<Pessoa> P = new ArrayList();
-  public ArrayList<Integer> Tij = new ArrayList();
-  public ArrayList<Integer> Tot = new ArrayList();
-  public ArrayList<Integer> Buf = new ArrayList();
+  public int[] Tij;
+  public int[] Tot;
+  public int[] Buf;
   public int pessoas;
   public int qtdemax;
   public int qtdetijolos;
@@ -39,11 +40,15 @@ public class Caminhao {
    */
   public void imprime(int B) {
     //Primeira linha
-    System.out.println("----------------------------------");
+    System.out.print("-");
+    for (int i = 0; i < pessoas; i++) {
+      System.out.print("-----------");
+    }
+    System.out.print("\n");
     //Segunda linha
     System.out.print("-");
-    for (int i = 0; i < Tij.size(); i++) {
-      int K = Tij.get(i) / Tot.get(i);
+    for (int i = 0; i < pessoas; i++) {
+      int K = Tij[i] / Tot[i];
       for (int j = 10; j > K; j--) {
         System.out.print(" ");
       }
@@ -106,13 +111,12 @@ public class Caminhao {
     for (int i = 0; i < pessoas; i++) {
       System.out.print(" ");
       if (cima.get(j).espaco == i) {
-
         if (cima.get(j).notificado) {
           System.out.print("N");
         } else {
           System.out.print(" ");
         }
-        System.out.print("     ");
+        System.out.print("      ");
         if (cima.get(j).resposta) {
           System.out.print("A");
         } else {
@@ -121,7 +125,7 @@ public class Caminhao {
         System.out.print(" ");
         j++;
       } else {
-        System.out.print("         ");
+        System.out.print("          ");
       }
       System.out.print("-");
     }
@@ -132,9 +136,9 @@ public class Caminhao {
     }
     //Nona linha
     System.out.print("\n-");
-    for (int i = 0; i < Buf.size(); i++) {
+    for (int i = 0; i < pessoas; i++) {
       for (j = 20; j > 10; j--) {
-        if (Buf.get(i) > j) {
+        if (Buf[i] > j) {
           System.out.print("T");
         } else {
           System.out.print(" ");
@@ -144,9 +148,9 @@ public class Caminhao {
     }
     //Decima e decima primeira linhas
     System.out.print("\n-");
-    for (int i = 0; i < Buf.size(); i++) {
+    for (int i = 0; i < pessoas; i++) {
       for (j = 10; j > 0; j--) {
-        if (Buf.get(i) > j) {
+        if (Buf[i] > j) {
           System.out.print("T");
         } else {
           System.out.print(" ");
@@ -154,7 +158,7 @@ public class Caminhao {
       }
       System.out.print("-");
     }
-    System.out.print("\n\n-");
+    System.out.print("\n-"); //A decima primeira caiu
     //Decima segunda linha
     for (int i = 0; i < baixo.size(); i++) {
       System.out.print("---");
@@ -177,7 +181,6 @@ public class Caminhao {
       } else {
         System.out.print("C=" + baixo.get(i).qtdepvez + "     ");
       }
-      System.out.print("          ");
       System.out.print("-");
     }
     //Decima quinta linha
@@ -189,7 +192,7 @@ public class Caminhao {
       } else {
         System.out.print(" ");
       }
-      System.out.print("     ");
+      System.out.print("      ");
       if (baixo.get(i).resposta) {
         System.out.print("A");
       } else {
@@ -214,9 +217,393 @@ public class Caminhao {
     notifyAll();
     return true;
   }
-
-  public synchronized boolean espaco1() {
+  
+  
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco1(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[0] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[0]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[0] = Buf[0] - Q;
+        } else {
+          Buf[0] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[0] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[0] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[0] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[0] = Tij[0] - Q;
+            Buf[0] = Buf[0] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[0] = Tij[0] - (qtdemax - Buf[0]);
+            Buf[0] = qtdemax;
+          }
+        } else {
+          if (pessoas > 1) {
+            return espaco2(P);
+          }
+        }
+      }
+    }
     return true;
   }
 
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco2(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[1] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[1]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[1] = Buf[1] - Q;
+        } else {
+          Buf[1] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[1] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[1] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[1] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[1] = Tij[1] - Q;
+            Buf[1] = Buf[1] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[1] = Tij[1] - (qtdemax - Buf[1]);
+            Buf[1] = qtdemax;
+          }
+        } else {
+          if (pessoas > 2) {
+            return espaco3(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco3(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[2] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[2]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[2] = Buf[2] - Q;
+        } else {
+          Buf[2] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[2] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[2] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[2] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[2] = Tij[2] - Q;
+            Buf[2] = Buf[2] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[2] = Tij[2] - (qtdemax - Buf[2]);
+            Buf[2] = qtdemax;
+          }
+        } else {
+          if (pessoas > 3) {
+            return espaco4(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco4(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[3] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[3]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[3] = Buf[3] - Q;
+        } else {
+          Buf[3] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[3] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[3] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[3] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[3] = Tij[3] - Q;
+            Buf[3] = Buf[3] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[3] = Tij[3] - (qtdemax - Buf[3]);
+            Buf[3] = qtdemax;
+          }
+        } else {
+          if (pessoas > 5) {
+            return espaco5(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco5(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[4] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[4]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[4] = Buf[4] - Q;
+        } else {
+          Buf[4] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[4] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[4] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[4] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[4] = Tij[4] - Q;
+            Buf[4] = Buf[4] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[4] = Tij[4] - (qtdemax - Buf[4]);
+            Buf[4] = qtdemax;
+          }
+        } else {
+          if (pessoas > 5) {
+            return espaco6(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco6(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[5] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[5]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[5] = Buf[5] - Q;
+        } else {
+          Buf[5] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[5] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[5] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[5] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[5] = Tij[5] - Q;
+            Buf[5] = Buf[5] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[5] = Tij[5] - (qtdemax - Buf[5]);
+            Buf[5] = qtdemax;
+          }
+        } else {
+          if (pessoas > 6) {
+            return espaco7(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco7(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[6] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[6]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[6] = Buf[6] - Q;
+        } else {
+          Buf[6] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[6] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[6] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[6] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[6] = Tij[6] - Q;
+            Buf[6] = Buf[6] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[6] = Tij[6] - (qtdemax - Buf[6]);
+            Buf[6] = qtdemax;
+          }
+        } else {
+          if (pessoas > 7) {
+            return espaco8(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco8(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[7] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[7]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[7] = Buf[7] - Q;
+        } else {
+          Buf[7] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[7] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[7] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[7] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[7] = Tij[7] - Q;
+            Buf[7] = Buf[7] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[7] = Tij[7] - (qtdemax - Buf[7]);
+            Buf[7] = qtdemax;
+          }
+        } else {
+          if (pessoas > 8) {
+            return espaco9(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco9(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[8] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[8]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[8] = Buf[8] - Q;
+        } else {
+          Buf[8] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[8] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[8] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[8] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[8] = Tij[8] - Q;
+            Buf[8] = Buf[8] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[8] = Tij[8] - (qtdemax - Buf[8]);
+            Buf[8] = qtdemax;
+          }
+        } else {
+          if (pessoas > 9) {
+            return espaco10(P);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Controle de espaco
+   * @param P : Pessoa que esta usando o espaco
+   * @return 
+   */
+  public synchronized boolean espaco10(Pessoa P) {
+    if (P.espaco < 0) { //Em baixo do caminhao
+      if (Buf[9] > 0) { //Se tem tijolos no buffer
+        int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+        if (Q <= Buf[9]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem
+          Buf[9] = Buf[9] - Q;
+        } else {
+          Buf[9] = 0;
+        }
+      } else { //Se o buffer esta vazio
+        return false;
+      }
+    } else { //Em cima do caminhao
+      if (Buf[9] < qtdemax) { //Se o buffer nao esta cheio
+        if (Tij[9] > 0) { //Se ainda tem tijolos
+          int Q = randomGenerator.nextInt(P.qtdepvez - 1) + 1;
+          if (Buf[9] + Q <= qtdemax) { //Se o buffer nao estourar
+            Tij[9] = Tij[9] - Q;
+            Buf[9] = Buf[9] + Q;
+          } else { //Se o buffer estourar, tem que tirar alguns
+            Tij[9] = Tij[9] - (qtdemax - Buf[9]);
+            Buf[9] = qtdemax;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Faz threads dormirem (especificamente as pessoas)
+   * @return
+   * @throws InterruptedException 
+   */
+  public synchronized boolean dorme() throws InterruptedException {
+    wait();
+    return true;
+  }
 }

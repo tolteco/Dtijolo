@@ -7,7 +7,12 @@ package entidades;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @author Maycon
+ */
 public class Pessoa extends Thread implements Runnable {
+
   public int qtdepvez; //Quantidade de tijolos que carrega por vez
   public double velocidade; //Velocidade de trabalho (tempo para sleep)
   public int espaco; //Espaco que essa Thread esta cuidando. Se for negativo 
@@ -15,14 +20,16 @@ public class Pessoa extends Thread implements Runnable {
   public int nro; //Identificador da pessoa
   public boolean notificado = false;
   public boolean resposta = false;
-  
+
   Caminhao C; //Caminhao para referencia
 
   /**
    * Inicializador de pessoas
+   *
    * @param C : Referencia do Caminhao
    * @param qtdepvez : Quantidade de tijolos que leva por vez
    * @param velocidade : Tempo de espera entre operacoes
+   * @param nro : Numero de identificacao
    */
   public Pessoa(Caminhao C, int qtdepvez, double velocidade, int nro) {
     this.C = C;
@@ -30,18 +37,19 @@ public class Pessoa extends Thread implements Runnable {
     this.velocidade = velocidade;
     this.nro = nro;
   }
-  
+
   @Override
   public void run() {
-    try { //Todos os que comecam esperam porque sao gerados juntos. Ficam
+    try {
+      //Todos os que comecam esperam porque sao gerados juntos. Ficam
       //esperando ate que monitor acione todos juntos
-      wait();
+      C.dorme();
     } catch (InterruptedException ex) {
       Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
     }
     //Comeca a trabalhar
-    while (C.trabalha){ //Enquanto o monitor falar que tem o que fazer
-      
+    while (C.trabalha) { //Enquanto o monitor falar que tem o que fazer
+
     }
   }
 }

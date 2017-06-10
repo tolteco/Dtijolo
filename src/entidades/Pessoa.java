@@ -4,6 +4,9 @@
  */
 package entidades;
 
+import static disttijolo.DistTijolo.TIME;
+import static disttijolo.DistTijolo.randomGenerator;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +52,67 @@ public class Pessoa extends Thread implements Runnable {
     }
     //Comeca a trabalhar
     while (C.trabalha) { //Enquanto o monitor falar que tem o que fazer
-
+      switch (espaco) {
+        case 1:
+          C.espaco1(this);
+          break;
+        case 2:
+          C.espaco2(this);
+          break;
+        case 3:
+          C.espaco3(this);
+          break;
+        case 4:
+          C.espaco4(this);
+          break;
+        case 5:
+          C.espaco5(this);
+          break;
+        case 6:
+          C.espaco6(this);
+          break;
+        case 7:
+          C.espaco7(this);
+          break;
+        case 8:
+          C.espaco8(this);
+          break;
+        case 9:
+          C.espaco9(this);
+          break;
+        case 10:
+          C.espaco10(this);
+          break;
+        default:
+          //System.out.println("Thread com defeito!!");
+          break;
+      }
+      int randomInt = descansa();
+      try {
+        TimeUnit.MILLISECONDS.sleep(randomInt); //Para milisegundos
+      } catch (InterruptedException ex) {
+        Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      Thread.yield(); //Forca a troca de contexto
     }
+  }
+
+  private int descansa() {
+    int T = 0;
+    switch (TIME) {
+      case 0:
+        //0.1 ~ 1.1
+        T = (int) (randomGenerator.nextDouble() * 1000) + 1;
+        break;
+      case 1:
+        //1 ~ 3
+        T = (randomGenerator.nextInt(2) + 1) * 1000;
+        break;
+      default:
+        //3 ~ 5
+        T = (randomGenerator.nextInt(2) + 3) * 1000;
+        break;
+    }
+    return T;
   }
 }

@@ -211,8 +211,13 @@ public class Caminhao {
         if (Tij[0] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if ((Buf[0] + Q) <= qtdemax) { //Se o buffer nao estourar
-            Tij[0] = Tij[0] - Q;
-            Buf[0] = Buf[0] + Q;
+            if ((Tij[0] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[0] = Buf[0] + Tij[0];
+              Tij[0] = 0;
+            } else {
+              Tij[0] = Tij[0] - Q;
+              Buf[0] = Buf[0] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[0] - (qtdemax - Buf[0])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[0] = Buf[0] + Tij[0];
@@ -257,8 +262,13 @@ public class Caminhao {
         if (Tij[1] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[1] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[1] = Tij[1] - Q;
-            Buf[1] = Buf[1] + Q;
+            if ((Tij[1] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[1] = Buf[1] + Tij[1];
+              Tij[1] = 1;
+            } else {
+              Tij[1] = Tij[1] - Q;
+              Buf[1] = Buf[1] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[1] - (qtdemax - Buf[1])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[1] = Buf[1] + Tij[1];
@@ -303,8 +313,13 @@ public class Caminhao {
         if (Tij[2] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[2] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[2] = Tij[2] - Q;
-            Buf[2] = Buf[2] + Q;
+            if ((Tij[2] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[2] = Buf[2] + Tij[2];
+              Tij[2] = 2;
+            } else {
+              Tij[2] = Tij[2] - Q;
+              Buf[2] = Buf[2] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[2] - (qtdemax - Buf[2])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[2] = Buf[2] + Tij[2];
@@ -349,8 +364,13 @@ public class Caminhao {
         if (Tij[3] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[3] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[3] = Tij[3] - Q;
-            Buf[3] = Buf[3] + Q;
+            if ((Tij[3] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[3] = Buf[3] + Tij[3];
+              Tij[3] = 3;
+            } else {
+              Tij[3] = Tij[3] - Q;
+              Buf[3] = Buf[3] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[3] - (qtdemax - Buf[3])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[3] = Buf[3] + Tij[3];
@@ -395,8 +415,13 @@ public class Caminhao {
         if (Tij[4] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[4] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[4] = Tij[4] - Q;
-            Buf[4] = Buf[4] + Q;
+            if ((Tij[4] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[4] = Buf[4] + Tij[4];
+              Tij[4] = 4;
+            } else {
+              Tij[4] = Tij[4] - Q;
+              Buf[4] = Buf[4] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[4] - (qtdemax - Buf[4])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[4] = Buf[4] + Tij[4];
@@ -441,8 +466,13 @@ public class Caminhao {
         if (Tij[5] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[5] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[5] = Tij[5] - Q;
-            Buf[5] = Buf[5] + Q;
+            if ((Tij[5] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[5] = Buf[5] + Tij[5];
+              Tij[5] = 5;
+            } else {
+              Tij[5] = Tij[5] - Q;
+              Buf[5] = Buf[5] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[5] - (qtdemax - Buf[5])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[5] = Buf[5] + Tij[5];
@@ -487,8 +517,13 @@ public class Caminhao {
         if (Tij[6] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[6] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[6] = Tij[6] - Q;
-            Buf[6] = Buf[6] + Q;
+            if ((Tij[6] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[6] = Buf[6] + Tij[6];
+              Tij[6] = 6;
+            } else {
+              Tij[6] = Tij[6] - Q;
+              Buf[6] = Buf[6] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[6] - (qtdemax - Buf[6])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[6] = Buf[6] + Tij[6];
@@ -533,8 +568,13 @@ public class Caminhao {
         if (Tij[7] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[7] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[7] = Tij[7] - Q;
-            Buf[7] = Buf[7] + Q;
+            if ((Tij[7] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[7] = Buf[7] + Tij[7];
+              Tij[7] = 7;
+            } else {
+              Tij[7] = Tij[7] - Q;
+              Buf[7] = Buf[7] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[7] - (qtdemax - Buf[7])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[7] = Buf[7] + Tij[7];
@@ -579,8 +619,13 @@ public class Caminhao {
         if (Tij[8] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[8] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[8] = Tij[8] - Q;
-            Buf[8] = Buf[8] + Q;
+            if ((Tij[8] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[8] = Buf[8] + Tij[8];
+              Tij[8] = 8;
+            } else {
+              Tij[8] = Tij[8] - Q;
+              Buf[8] = Buf[8] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[8] - (qtdemax - Buf[8])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[8] = Buf[8] + Tij[8];
@@ -623,8 +668,13 @@ public class Caminhao {
         if (Tij[9] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
           if (Buf[9] + Q <= qtdemax) { //Se o buffer nao estourar
-            Tij[9] = Tij[9] - Q;
-            Buf[9] = Buf[9] + Q;
+            if ((Tij[9] - Q) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[9] = Buf[9] + Tij[9];
+              Tij[9] = 9;
+            } else {
+              Tij[9] = Tij[9] - Q;
+              Buf[9] = Buf[9] + Q;
+            }
           } else { //Se o buffer estourar, tem que tirar alguns
             if ((Tij[9] - (qtdemax - Buf[9])) < 0) { //Se tira mais tijolos do que tem disponivel
               Buf[9] = Buf[9] + Tij[9];

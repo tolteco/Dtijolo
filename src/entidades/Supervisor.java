@@ -8,6 +8,7 @@ import static disttijolo.DistTijolo.qtdetotal;
 import static disttijolo.DistTijolo.randomGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ public class Supervisor extends Thread implements Runnable {
 
   public static ArrayList<Pessoa> cima = new ArrayList();
   public static ArrayList<Pessoa> baixo = new ArrayList();
+  public static int[] recemtrocado = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   boolean trabalhar1, trabalhar2, trabalhar = true;
   Caminhao C;
 
@@ -72,8 +74,8 @@ public class Supervisor extends Thread implements Runnable {
     //Imprime caminhao e notifica todas as Threads para comecarem
     C.imprime(baixo.size());
     System.out.println("Tot: " + Arrays.toString(C.Tot) + ". Tij: " + Arrays.toString(C.Tij));
-    System.out.println("Cima: " + cima);
-    System.out.println("Baixo: " + baixo);
+    //System.out.println("Cima: " + cima);
+    //System.out.println("Baixo: " + baixo);
 
     if (!(C.acorda())) { //Funcao sincronizada para acionar notify
       System.out.println("Erro. Nao foi possivel acordar Threads");
@@ -92,10 +94,12 @@ public class Supervisor extends Thread implements Runnable {
       trabalhar = trabalhar1 | trabalhar2;
       C.imprime(baixo.size());
       System.out.println("Tot: " + Arrays.toString(C.Tot) + ". Tij: " + Arrays.toString(C.Tij));
-      System.out.println("Cima: " + cima);
-      System.out.println("Baixo: " + baixo);
+      //System.out.println("Cima: " + cima);
+      //System.out.println("Baixo: " + baixo);
+      //System.out.println("T1=" + trabalhar1 + ".T2=" + trabalhar2 + "T=" + trabalhar);
       Thread.yield(); //Forca a troca de contexto
     }
+    C.imprime(baixo.size());
   }
 
   public Supervisor(Caminhao _C) {
@@ -126,11 +130,21 @@ public class Supervisor extends Thread implements Runnable {
     for (i = 1; i < C.pessoas + 1; i++) {
       S += C.Buf[i - 1];
       if (C.Buf[i - 1] == 0) { //Se o buffer esta vazio
-        //Significa que o produtor e inexistente ou que esta muito devagar
-        if (procuraProdutor(i)) { //Produtor Lerdo
-          trocaProdutorL(i);
-        } else { //Produtor inexistente
-          colocaProdutor(i);
+        //Significa que o produtor e inexistente ou que esta muito devagar OU que acabou os tijolos
+        if (C.Tij[i - 1] == 0) { //Sem mais tijolos
+          int E = procuraEspacoC();
+          if (E == -1){ //Deu algum erro e ja devia ter parado
+            trabalhar = false;
+          } else { //Tem algum espaco
+            poeTrabalhadores(E);
+          }
+        } else {
+          if (procuraProdutor(i) && recemtrocado[i-1] == 0) { //Produtor Lerdo e nao foi recem trocado
+            trocaProdutorL(i);
+            recemtrocado[i-1] = 3;
+          } else if (recemtrocado[i-1] == 0) { //Produtor inexistente
+            colocaProdutor(i);
+          }
         }
       }
       if (C.Buf[i - 1] == C.qtdemax) { //Se o buffer esta cheio
@@ -140,16 +154,21 @@ public class Supervisor extends Thread implements Runnable {
           if (SU < ((qtdetotal / C.pessoas) - 1)) { //Se a quantidade de pessoas nao esta igualmente distribuida (poucos consumidores)
             colocaPessoas(SU, i);
           } else { //Se esta distribuido (Produtor Rapido)
-            if (procuraProdutor(i)) { //Confirmacao se existe um produtor para ser trocado
+            if (procuraProdutor(i) && recemtrocado[i-1] == 0) { //Confirmacao se existe um produtor para ser trocado
               trocaProdutorR(i);
+              recemtrocado[i-1] = 1;
             }
           }
         } else { //Consumidores inexistentes
           colocaPessoas(0, i);
         }
       }
+      if (recemtrocado[i-1] > 0){
+        recemtrocado[i-1] = recemtrocado[i-1] - 1;
+      }
     }
-    return !(S == 0 && trabalhar1);
+    System.out.println("S = " + S);
+    return S == 0 | trabalhar1;
   }
 
   /**
@@ -217,11 +236,15 @@ public class Supervisor extends Thread implements Runnable {
    * @param i : espaco
    */
   private void colocaPessoas(int SU, int i) {
+    int T = 0;
     while (SU < ((qtdetotal / C.pessoas) - 1)) { //Enquanto nao tem pessoas que chegue
-      int T = randomGenerator.nextInt(baixo.size() - 1);
       if (baixo.get(T).espaco != -i) {
         baixo.get(T).espaco = -i;
         SU++;
+      }
+      T++;
+      if (T == baixo.size()){
+        return;
       }
     }
   }
@@ -289,5 +312,31 @@ public class Supervisor extends Thread implements Runnable {
         break;
     }
     return T;
+  }
+
+  private int procuraEspacoC() {
+    for (int i = 0; i < C.pessoas; i++) {
+      if (C.Buf[i] > 0 || C.Tij[i] > 0){
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private void poeTrabalhadores(int E) {
+    int SU = 0;
+    E = E+1;
+    int T = 0;
+    Collections.shuffle(baixo);
+    while (SU < ((qtdetotal / C.pessoas) - 1)) { //Enquanto nao tem pessoas que chegue
+      if (baixo.get(T).espaco != -E) {
+        baixo.get(T).espaco = -E;
+        SU++;
+      }
+      T++;
+      if (T == baixo.size()){
+        return;
+      }
+    }
   }
 }

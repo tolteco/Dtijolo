@@ -200,7 +200,6 @@ public class Caminhao {
    */
   public synchronized boolean espaco1(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
-      System.out.println("To embaixo");
       if (Buf[0] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
         if (Q <= Buf[0]) { //Se a pessoa decidiu pegar pelo o menos quantos tijolos tem

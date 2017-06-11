@@ -41,8 +41,8 @@ public class Supervisor extends Thread implements Runnable {
     Q -= V;
     System.out.println("Tij = " + Arrays.toString(C.Tij) + ". Tot = " + Arrays.toString(C.Tot));
     //Distribuicao das pessoas em cima ou nao do caminhao
-    double D = C.pessoas / qtdetotal;
-    int Pe = C.pessoas;
+    double D = C.pessoas+1 / qtdetotal;
+    int Pe = C.pessoas+1;
     double O;
     for (Pessoa pessoa : C.P) { //Sorteio para subir no caminhao
       O = randomGenerator.nextDouble();
@@ -121,9 +121,9 @@ public class Supervisor extends Thread implements Runnable {
    */
   private boolean olhaBuffersAbaixo() {
     int S = 0, i;
-    for (i = 0; i < C.pessoas; i++) {
-      S += C.Buf[i];
-      if (C.Buf[i] == 0) { //Se o buffer esta vazio
+    for (i = 1; i < C.pessoas+1; i++) {
+      S += C.Buf[i-1];
+      if (C.Buf[i-1] == 0) { //Se o buffer esta vazio
         //Significa que o produtor e inexistente ou que esta muito devagar
         if (procuraProdutor(i)) { //Produtor Lerdo
           trocaProdutorL(i);
@@ -131,14 +131,16 @@ public class Supervisor extends Thread implements Runnable {
           colocaProdutor(i);
         }
       }
-      if (C.Buf[i] == C.qtdemax) { //Se o buffer esta cheio
+      if (C.Buf[i-1] == C.qtdemax) { //Se o buffer esta cheio
         //Significa que o produtor e muito rapido ou que no tem ninguem olhando esse setor debaixo
         int SU = contaConsumidores(i);
         if (SU != 0) { //Produtor muito rapido (ou poucos consumidores)
           if (SU < (C.pessoas / qtdetotal)) { //Se a quantidade de pessoas nao esta igualmente distribuida (poucos consumidores)
             colocaPessoas(SU, i);
           } else { //Se esta distribuido (Produtor Rapido)
-            trocaProdutorR(i);
+            if (procuraProdutor(i)){
+              trocaProdutorR(i);
+            }
           }
         } else { //Consumidores inexistentes
           colocaPessoas(0, i);

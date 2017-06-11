@@ -23,7 +23,7 @@ public class DistTijolo {
     //de tijolos por espaco, trocar valor do meio
     randomGenerator = new Random();
     Scanner input = new Scanner(System.in);
-    
+
     //Faz perguntas
     System.out.println("Quantidade total de tijolos:");
     cam.qtdetijolos = input.nextInt();
@@ -70,6 +70,7 @@ public class DistTijolo {
 
   /**
    * Entrada manual
+   *
    * @param cam : Caminhao
    */
   private static void manualEntry(Caminhao cam) {
@@ -99,6 +100,7 @@ public class DistTijolo {
 
   /**
    * Entrada Aleatoria
+   *
    * @param cam : Caminhao
    */
   private static void randomEntry(Caminhao cam) {

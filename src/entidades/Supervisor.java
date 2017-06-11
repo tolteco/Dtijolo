@@ -41,15 +41,16 @@ public class Supervisor extends Thread implements Runnable {
     Q -= V;
     System.out.println("Tij = " + Arrays.toString(C.Tij) + ". Tot = " + Arrays.toString(C.Tot));
     //Distribuicao das pessoas em cima ou nao do caminhao
-    double D = C.pessoas+1 / qtdetotal;
-    int Pe = C.pessoas+1;
+    double D = (C.pessoas + 1) / qtdetotal;
+    int Pe = C.pessoas + 1;
     double O;
     for (Pessoa pessoa : C.P) { //Sorteio para subir no caminhao
       O = randomGenerator.nextDouble();
       if (D > O && Pe > 0) {
         cima.add(pessoa);
         pessoa.espaco = cima.size(); //Metodo mais simples de controle
-        D = Pe / qtdetotal;
+        System.out.println("Cima.size()= " + cima.size());
+        D = (Pe + 1) / qtdetotal;
         Pe--;
       } else {
         if (C.pessoas == 1) {
@@ -61,7 +62,8 @@ public class Supervisor extends Thread implements Runnable {
         }
       }
     }
-    if (Pe == C.pessoas) { //Significa que ninguem foi sorteado para subir
+    if (cima.isEmpty()) { //Significa que ninguem foi sorteado para subir
+      System.out.println("Ninguem Sorteado");
       baixo.get(0).espaco = -baixo.get(0).espaco;
       cima.add(baixo.get(0));
       baixo.remove(0);
@@ -69,6 +71,9 @@ public class Supervisor extends Thread implements Runnable {
 
     //Imprime caminhao e notifica todas as Threads para comecarem
     C.imprime(baixo.size());
+    System.out.println("Tot: " + Arrays.toString(C.Tot) + ". Tij: " + Arrays.toString(C.Tij));
+    System.out.println("Cima: " + cima);
+    System.out.println("Baixo: " + baixo);
 
     if (!(C.acorda())) { //Funcao sincronizada para acionar notify
       System.out.println("Erro. Nao foi possivel acordar Threads");
@@ -118,9 +123,9 @@ public class Supervisor extends Thread implements Runnable {
    */
   private boolean olhaBuffersAbaixo() {
     int S = 0, i;
-    for (i = 1; i < C.pessoas+1; i++) {
-      S += C.Buf[i-1];
-      if (C.Buf[i-1] == 0) { //Se o buffer esta vazio
+    for (i = 1; i < C.pessoas + 1; i++) {
+      S += C.Buf[i - 1];
+      if (C.Buf[i - 1] == 0) { //Se o buffer esta vazio
         //Significa que o produtor e inexistente ou que esta muito devagar
         if (procuraProdutor(i)) { //Produtor Lerdo
           trocaProdutorL(i);
@@ -128,14 +133,14 @@ public class Supervisor extends Thread implements Runnable {
           colocaProdutor(i);
         }
       }
-      if (C.Buf[i-1] == C.qtdemax) { //Se o buffer esta cheio
-        //Significa que o produtor e muito rapido ou que no tem ninguem olhando esse setor debaixo
+      if (C.Buf[i - 1] == C.qtdemax) { //Se o buffer esta cheio
+        //Significa que o produtor e muito rapido ou que nao tem ninguem olhando esse setor debaixo
         int SU = contaConsumidores(i);
         if (SU != 0) { //Produtor muito rapido (ou poucos consumidores)
-          if (SU < (C.pessoas / qtdetotal)) { //Se a quantidade de pessoas nao esta igualmente distribuida (poucos consumidores)
+          if (SU < ((qtdetotal / C.pessoas) - 1)) { //Se a quantidade de pessoas nao esta igualmente distribuida (poucos consumidores)
             colocaPessoas(SU, i);
           } else { //Se esta distribuido (Produtor Rapido)
-            if (procuraProdutor(i)){
+            if (procuraProdutor(i)) { //Confirmacao se existe um produtor para ser trocado
               trocaProdutorR(i);
             }
           }
@@ -161,7 +166,7 @@ public class Supervisor extends Thread implements Runnable {
     }
     return false;
   }
-  
+
   /**
    * Procura produtor no espaco i (Ate porque o outro procura mas nao acha)
    *
@@ -212,7 +217,7 @@ public class Supervisor extends Thread implements Runnable {
    * @param i : espaco
    */
   private void colocaPessoas(int SU, int i) {
-    while (SU < (C.pessoas / qtdetotal)) { //Enquanto nao tem pessoas que chegue
+    while (SU < ((qtdetotal / C.pessoas) - 1)) { //Enquanto nao tem pessoas que chegue
       int T = randomGenerator.nextInt(baixo.size() - 1);
       if (baixo.get(T).espaco != -i) {
         baixo.get(T).espaco = -i;
@@ -237,7 +242,7 @@ public class Supervisor extends Thread implements Runnable {
       }
     }
     cima.get(pos).espaco = -cima.get(pos).espaco;
-    baixo.get(I).espaco = -baixo.get(I).espaco;
+    baixo.get(I).espaco = i;
     cima.add(baixo.get(I));
     baixo.add(cima.get(pos));
     baixo.remove(I);
@@ -260,7 +265,7 @@ public class Supervisor extends Thread implements Runnable {
       }
     }
     cima.get(pos).espaco = -cima.get(pos).espaco;
-    baixo.get(I).espaco = -baixo.get(I).espaco;
+    baixo.get(I).espaco = i;
     cima.add(baixo.get(I));
     baixo.add(cima.get(pos));
     baixo.remove(I);

@@ -11,9 +11,9 @@ import java.util.ArrayList;
 public class Caminhao {
 
   public ArrayList<Pessoa> P = new ArrayList();
-  public int[] Tij = {0,0,0,0,0,0,0,0,0,0};
-  public int[] Tot = {0,0,0,0,0,0,0,0,0,0};
-  public int[] Buf = {0,0,0,0,0,0,0,0,0,0};
+  public int[] Tij = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  public int[] Tot = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  public int[] Buf = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   public int pessoas;
   public int qtdemax;
   public int qtdetijolos;
@@ -64,7 +64,7 @@ public class Caminhao {
     }
     //Quarta linha
     System.out.print("\n-");
-    for (int i = 1; i < pessoas+1; i++) {
+    for (int i = 1; i < pessoas + 1; i++) {
       System.out.print("    ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -76,7 +76,7 @@ public class Caminhao {
     }
     //Quinta linha
     System.out.print("\n-");
-    for (int i = 1; i < pessoas+1; i++) {
+    for (int i = 1; i < pessoas + 1; i++) {
       System.out.print(" ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -88,7 +88,7 @@ public class Caminhao {
     }
     //Sexta linha
     System.out.print("\n-");
-    for (int i = 1; i < pessoas+1; i++) {
+    for (int i = 1; i < pessoas + 1; i++) {
       System.out.print(" ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -135,8 +135,8 @@ public class Caminhao {
     System.out.print("\n");
     //Decima linha
     for (int i = 0; i < baixo.size(); i++) {
-      System.out.print("===");
-      System.out.print(baixo.get(i).espaco + "P" + baixo.get(i).nro);
+      System.out.print("====");
+      System.out.print("P" + baixo.get(i).nro);
       System.out.print("=====");
     }
     //Decima primeira linha
@@ -147,7 +147,7 @@ public class Caminhao {
       System.out.print(" -");
     }
     //Decima segunda linha
-    System.out.print("\n");
+    System.out.print("\n-");
     for (int i = 0; i < baixo.size(); i++) {
       System.out.print(" ");
       if (baixo.get(i).qtdepvez < 10) {
@@ -160,19 +160,13 @@ public class Caminhao {
     //Decima terceira linha
     System.out.print("\n-");
     for (int i = 0; i < baixo.size(); i++) {
-      System.out.print(" ");
-      if (baixo.get(i).notificado) {
-        System.out.print("N");
+      if (baixo.get(i).espaco < 0) {
+        System.out.print("    " + baixo.get(i).espaco + "    -");
+      } else if (baixo.get(i).espaco < 10) {
+        System.out.print("     " + baixo.get(i).espaco + "    -");
       } else {
-        System.out.print(" ");
+        System.out.print("    " + baixo.get(i).espaco + "    -");
       }
-      System.out.print("      ");
-      if (baixo.get(i).resposta) {
-        System.out.print("A");
-      } else {
-        System.out.print(" ");
-      }
-      System.out.print(" -");
     }
     //Decima quarta linha
     System.out.print("\n-");
@@ -191,12 +185,12 @@ public class Caminhao {
     notifyAll();
     return true;
   }
-  
-  
+
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco1(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -209,19 +203,24 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 1) {
-            return espaco2(P);
-          }
+          return espaco2(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[0] < qtdemax) { //Se o buffer nao esta cheio
         if (Tij[0] > 0) { //Se ainda tem tijolos
           int Q = randomGenerator.nextInt(P.qtdepvez);
-          if (Buf[0] + Q <= qtdemax) { //Se o buffer nao estourar
+          if ((Buf[0] + Q) <= qtdemax) { //Se o buffer nao estourar
             Tij[0] = Tij[0] - Q;
             Buf[0] = Buf[0] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[0] = Tij[0] - (qtdemax - Buf[0]);
-            Buf[0] = qtdemax;
+            if ((Tij[0] - (qtdemax - Buf[0])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[0] = Buf[0] + Tij[0];
+              Tij[0] = 0;
+            } else {
+              Tij[0] = Tij[0] - (qtdemax - Buf[0]);
+              Buf[0] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 1) {
@@ -235,8 +234,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco2(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -249,8 +249,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 2) {
-            return espaco3(P);
-          }
+          return espaco3(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[1] < qtdemax) { //Se o buffer nao esta cheio
@@ -260,8 +260,13 @@ public class Caminhao {
             Tij[1] = Tij[1] - Q;
             Buf[1] = Buf[1] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[1] = Tij[1] - (qtdemax - Buf[1]);
-            Buf[1] = qtdemax;
+            if ((Tij[1] - (qtdemax - Buf[1])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[1] = Buf[1] + Tij[1];
+              Tij[1] = 1;
+            } else {
+              Tij[1] = Tij[1] - (qtdemax - Buf[1]);
+              Buf[1] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 2) {
@@ -275,8 +280,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco3(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -289,8 +295,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 3) {
-            return espaco4(P);
-          }
+          return espaco4(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[2] < qtdemax) { //Se o buffer nao esta cheio
@@ -300,8 +306,13 @@ public class Caminhao {
             Tij[2] = Tij[2] - Q;
             Buf[2] = Buf[2] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[2] = Tij[2] - (qtdemax - Buf[2]);
-            Buf[2] = qtdemax;
+            if ((Tij[2] - (qtdemax - Buf[2])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[2] = Buf[2] + Tij[2];
+              Tij[2] = 2;
+            } else {
+              Tij[2] = Tij[2] - (qtdemax - Buf[2]);
+              Buf[2] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 3) {
@@ -315,8 +326,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco4(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -329,8 +341,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 5) {
-            return espaco5(P);
-          }
+          return espaco5(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[3] < qtdemax) { //Se o buffer nao esta cheio
@@ -340,8 +352,13 @@ public class Caminhao {
             Tij[3] = Tij[3] - Q;
             Buf[3] = Buf[3] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[3] = Tij[3] - (qtdemax - Buf[3]);
-            Buf[3] = qtdemax;
+            if ((Tij[3] - (qtdemax - Buf[3])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[3] = Buf[3] + Tij[3];
+              Tij[3] = 3;
+            } else {
+              Tij[3] = Tij[3] - (qtdemax - Buf[3]);
+              Buf[3] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 5) {
@@ -355,8 +372,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco5(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -369,8 +387,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 5) {
-            return espaco6(P);
-          }
+          return espaco6(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[4] < qtdemax) { //Se o buffer nao esta cheio
@@ -380,8 +398,13 @@ public class Caminhao {
             Tij[4] = Tij[4] - Q;
             Buf[4] = Buf[4] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[4] = Tij[4] - (qtdemax - Buf[4]);
-            Buf[4] = qtdemax;
+            if ((Tij[4] - (qtdemax - Buf[4])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[4] = Buf[4] + Tij[4];
+              Tij[4] = 4;
+            } else {
+              Tij[4] = Tij[4] - (qtdemax - Buf[4]);
+              Buf[4] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 5) {
@@ -395,8 +418,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco6(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -409,8 +433,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 6) {
-            return espaco7(P);
-          }
+          return espaco7(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[5] < qtdemax) { //Se o buffer nao esta cheio
@@ -420,8 +444,13 @@ public class Caminhao {
             Tij[5] = Tij[5] - Q;
             Buf[5] = Buf[5] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[5] = Tij[5] - (qtdemax - Buf[5]);
-            Buf[5] = qtdemax;
+            if ((Tij[5] - (qtdemax - Buf[5])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[5] = Buf[5] + Tij[5];
+              Tij[5] = 5;
+            } else {
+              Tij[5] = Tij[5] - (qtdemax - Buf[5]);
+              Buf[5] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 6) {
@@ -435,8 +464,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco7(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -449,8 +479,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 7) {
-            return espaco8(P);
-          }
+          return espaco8(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[6] < qtdemax) { //Se o buffer nao esta cheio
@@ -460,8 +490,13 @@ public class Caminhao {
             Tij[6] = Tij[6] - Q;
             Buf[6] = Buf[6] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[6] = Tij[6] - (qtdemax - Buf[6]);
-            Buf[6] = qtdemax;
+            if ((Tij[6] - (qtdemax - Buf[6])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[6] = Buf[6] + Tij[6];
+              Tij[6] = 6;
+            } else {
+              Tij[6] = Tij[6] - (qtdemax - Buf[6]);
+              Buf[6] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 7) {
@@ -475,8 +510,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco8(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -489,8 +525,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 8) {
-            return espaco9(P);
-          }
+          return espaco9(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[7] < qtdemax) { //Se o buffer nao esta cheio
@@ -500,8 +536,13 @@ public class Caminhao {
             Tij[7] = Tij[7] - Q;
             Buf[7] = Buf[7] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[7] = Tij[7] - (qtdemax - Buf[7]);
-            Buf[7] = qtdemax;
+            if ((Tij[7] - (qtdemax - Buf[7])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[7] = Buf[7] + Tij[7];
+              Tij[7] = 7;
+            } else {
+              Tij[7] = Tij[7] - (qtdemax - Buf[7]);
+              Buf[7] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 8) {
@@ -515,8 +556,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco9(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -529,8 +571,8 @@ public class Caminhao {
         }
       } else { //Se o buffer esta vazio
         if (pessoas > 9) {
-            return espaco10(P);
-          }
+          return espaco10(P);
+        }
       }
     } else { //Em cima do caminhao
       if (Buf[8] < qtdemax) { //Se o buffer nao esta cheio
@@ -540,8 +582,13 @@ public class Caminhao {
             Tij[8] = Tij[8] - Q;
             Buf[8] = Buf[8] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[8] = Tij[8] - (qtdemax - Buf[8]);
-            Buf[8] = qtdemax;
+            if ((Tij[8] - (qtdemax - Buf[8])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[8] = Buf[8] + Tij[8];
+              Tij[8] = 8;
+            } else {
+              Tij[8] = Tij[8] - (qtdemax - Buf[8]);
+              Buf[8] = qtdemax;
+            }
           }
         } else {
           if (pessoas > 9) {
@@ -555,8 +602,9 @@ public class Caminhao {
 
   /**
    * Controle de espaco
+   *
    * @param P : Pessoa que esta usando o espaco
-   * @return 
+   * @return
    */
   public synchronized boolean espaco10(Pessoa P) {
     if (P.espaco < 0) { //Em baixo do caminhao
@@ -578,8 +626,13 @@ public class Caminhao {
             Tij[9] = Tij[9] - Q;
             Buf[9] = Buf[9] + Q;
           } else { //Se o buffer estourar, tem que tirar alguns
-            Tij[9] = Tij[9] - (qtdemax - Buf[9]);
-            Buf[9] = qtdemax;
+            if ((Tij[9] - (qtdemax - Buf[9])) < 0) { //Se tira mais tijolos do que tem disponivel
+              Buf[9] = Buf[9] + Tij[9];
+              Tij[9] = 9;
+            } else {
+              Tij[9] = Tij[9] - (qtdemax - Buf[9]);
+              Buf[9] = qtdemax;
+            }
           }
         } else {
           return false;
@@ -591,8 +644,9 @@ public class Caminhao {
 
   /**
    * Faz threads dormirem (especificamente as pessoas)
+   *
    * @return
-   * @throws InterruptedException 
+   * @throws InterruptedException
    */
   public synchronized boolean dorme() throws InterruptedException {
     wait();
@@ -601,7 +655,7 @@ public class Caminhao {
 
   private int procuraProdutor(int i) {
     for (int j = 0; j < cima.size(); j++) {
-      if (cima.get(j).espaco == i){
+      if (cima.get(j).espaco == i) {
         return j;
       }
     }

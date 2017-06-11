@@ -86,6 +86,9 @@ public class Supervisor extends Thread implements Runnable {
       trabalhar2 = olhaBuffersAbaixo();
       trabalhar = trabalhar1 | trabalhar2;
       C.imprime(baixo.size());
+      System.out.println("Tot: " + Arrays.toString(C.Tot) + ". Tij: " + Arrays.toString(C.Tij));
+      System.out.println("Cima: " + cima);
+      System.out.println("Baixo: " + baixo);
       Thread.yield(); //Forca a troca de contexto
     }
   }
@@ -236,8 +239,8 @@ public class Supervisor extends Thread implements Runnable {
     cima.get(pos).espaco = -cima.get(pos).espaco;
     baixo.get(I).espaco = -baixo.get(I).espaco;
     cima.add(baixo.get(I));
-    baixo.remove(I);
     baixo.add(cima.get(pos));
+    baixo.remove(I);
     cima.remove(pos);
   }
 
@@ -259,8 +262,8 @@ public class Supervisor extends Thread implements Runnable {
     cima.get(pos).espaco = -cima.get(pos).espaco;
     baixo.get(I).espaco = -baixo.get(I).espaco;
     cima.add(baixo.get(I));
-    baixo.remove(I);
     baixo.add(cima.get(pos));
+    baixo.remove(I);
     cima.remove(pos);
   }
 

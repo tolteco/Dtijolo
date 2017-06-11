@@ -146,4 +146,9 @@ public class Pessoa extends Thread implements Runnable {
     }
     return T;
   }
+
+  @Override
+  public String toString() {
+    return "Pessoa{" + "qtdepvez=" + qtdepvez + ", velocidade=" + velocidade + ", espaco=" + espaco + ", nro=" + nro + ", notificado=" + notificado + ", resposta=" + resposta + ", C=" + C + "}\n";
+  }
 }

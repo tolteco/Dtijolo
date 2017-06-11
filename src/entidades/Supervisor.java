@@ -53,10 +53,10 @@ public class Supervisor extends Thread implements Runnable {
         Pe--;
       } else {
         if (C.pessoas == 1) {
-          pessoa.espaco = 0;
+          pessoa.espaco = -1;
           baixo.add(pessoa);
         } else {
-          pessoa.espaco = -randomGenerator.nextInt(C.pessoas - 1) + 1; //Aleatorio
+          pessoa.espaco = -(randomGenerator.nextInt(C.pessoas - 1) + 1); //Aleatorio
           baixo.add(pessoa);
         }
       }
@@ -66,7 +66,7 @@ public class Supervisor extends Thread implements Runnable {
       cima.add(baixo.get(0));
       baixo.remove(0);
     }
-    for (int z = 0; z < C.pessoas; z++) {
+    for (int z = 0; z < C.pessoas; z++) { //Cria pessoas fantasmas pra encher o array de cima senao estoura depois
       if (!procuraProdutor(z)) {
         Pessoa P = new Pessoa(C, 0, 0.0, -1);
         P.espaco = 11;
@@ -162,6 +162,21 @@ public class Supervisor extends Thread implements Runnable {
     }
     return false;
   }
+  
+  /**
+   * Procura produtor no espaco i (Ate porque o outro procura mas nao acha)
+   *
+   * @param i : espaco
+   * @return : indice do produtor
+   */
+  private int achaProdutor(int i) {
+    for (int j = 0; j < cima.size(); j++) {
+      if (cima.get(j).espaco == i) {
+        return j;
+      }
+    }
+    return -1;
+  }
 
   /**
    * Coloca um produtor no espaco i (Considera que nao tem ninguem la)
@@ -213,20 +228,21 @@ public class Supervisor extends Thread implements Runnable {
    * @param i : espaco
    */
   private void trocaProdutorL(int i) {
+    int pos = achaProdutor(i);
     int V = baixo.get(0).qtdepvez;
     int I = 0;
     for (int j = 1; j < baixo.size(); j++) {
-      if (baixo.get(j).qtdepvez < V && baixo.get(j).qtdepvez > cima.get(i).qtdepvez) {
+      if (baixo.get(j).qtdepvez < V && baixo.get(j).qtdepvez > cima.get(pos).qtdepvez) {
         V = baixo.get(j).qtdepvez;
         I = j;
       }
     }
-    cima.get(i).espaco = -cima.get(i).espaco;
+    cima.get(pos).espaco = -cima.get(pos).espaco;
     baixo.get(I).espaco = -baixo.get(I).espaco;
     cima.add(baixo.get(I));
     baixo.remove(I);
-    baixo.add(cima.get(i));
-    cima.remove(i);
+    baixo.add(cima.get(pos));
+    cima.remove(pos);
   }
 
   /**
@@ -235,20 +251,21 @@ public class Supervisor extends Thread implements Runnable {
    * @param i : espaco
    */
   private void trocaProdutorR(int i) {
+    int pos = achaProdutor(i);
     int V = baixo.get(0).qtdepvez;
     int I = 0;
     for (int j = 1; j < baixo.size(); j++) {
-      if (baixo.get(j).qtdepvez > V && baixo.get(j).qtdepvez < cima.get(i).qtdepvez) {
+      if (baixo.get(j).qtdepvez > V && baixo.get(j).qtdepvez < cima.get(pos).qtdepvez) {
         V = baixo.get(j).qtdepvez;
         I = j;
       }
     }
-    cima.get(i).espaco = -cima.get(i).espaco;
+    cima.get(pos).espaco = -cima.get(pos).espaco;
     baixo.get(I).espaco = -baixo.get(I).espaco;
     cima.add(baixo.get(I));
     baixo.remove(I);
-    baixo.add(cima.get(i));
-    cima.remove(i);
+    baixo.add(cima.get(pos));
+    cima.remove(pos);
   }
 
   private int descansa() {

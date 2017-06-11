@@ -64,7 +64,7 @@ public class Caminhao {
     }
     //Quarta linha
     System.out.print("\n-");
-    for (int i = 0; i < pessoas; i++) {
+    for (int i = 1; i < pessoas+1; i++) {
       System.out.print("    ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -76,7 +76,7 @@ public class Caminhao {
     }
     //Quinta linha
     System.out.print("\n-");
-    for (int i = 0; i < pessoas; i++) {
+    for (int i = 1; i < pessoas+1; i++) {
       System.out.print(" ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -88,7 +88,7 @@ public class Caminhao {
     }
     //Sexta linha
     System.out.print("\n-");
-    for (int i = 0; i < pessoas; i++) {
+    for (int i = 1; i < pessoas+1; i++) {
       System.out.print(" ");
       int J = procuraProdutor(i);
       if (J != -1) {
@@ -132,7 +132,7 @@ public class Caminhao {
       }
       System.out.print("-");
     }
-    System.out.print("\n-"); //A decima primeira caiu
+    System.out.print("\n");
     //Decima linha
     for (int i = 0; i < baixo.size(); i++) {
       System.out.print("===");
@@ -147,7 +147,7 @@ public class Caminhao {
       System.out.print(" -");
     }
     //Decima segunda linha
-    System.out.print("\n-");
+    System.out.print("\n");
     for (int i = 0; i < baixo.size(); i++) {
       System.out.print(" ");
       if (baixo.get(i).qtdepvez < 10) {

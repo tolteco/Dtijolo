@@ -66,13 +66,6 @@ public class Supervisor extends Thread implements Runnable {
       cima.add(baixo.get(0));
       baixo.remove(0);
     }
-    for (int z = 0; z < C.pessoas; z++) { //Cria pessoas fantasmas pra encher o array de cima senao estoura depois
-      if (!procuraProdutor(z)) {
-        Pessoa P = new Pessoa(C, 0, 0.0, -1);
-        P.espaco = 11;
-        cima.add(P);
-      }
-    }
 
     //Imprime caminhao e notifica todas as Threads para comecarem
     C.imprime(baixo.size());
@@ -91,6 +84,7 @@ public class Supervisor extends Thread implements Runnable {
       }
       trabalhar1 = olhaBuffersSobre();
       trabalhar2 = olhaBuffersAbaixo();
+      trabalhar = trabalhar1 | trabalhar2;
       C.imprime(baixo.size());
       Thread.yield(); //Forca a troca de contexto
     }

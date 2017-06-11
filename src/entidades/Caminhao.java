@@ -208,7 +208,9 @@ public class Caminhao {
           Buf[0] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 1) {
+            return espaco2(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[0] < qtdemax) { //Se o buffer nao esta cheio
@@ -246,7 +248,9 @@ public class Caminhao {
           Buf[1] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 2) {
+            return espaco3(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[1] < qtdemax) { //Se o buffer nao esta cheio
@@ -284,7 +288,9 @@ public class Caminhao {
           Buf[2] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 3) {
+            return espaco4(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[2] < qtdemax) { //Se o buffer nao esta cheio
@@ -322,7 +328,9 @@ public class Caminhao {
           Buf[3] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 5) {
+            return espaco5(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[3] < qtdemax) { //Se o buffer nao esta cheio
@@ -360,7 +368,9 @@ public class Caminhao {
           Buf[4] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 5) {
+            return espaco6(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[4] < qtdemax) { //Se o buffer nao esta cheio
@@ -398,7 +408,9 @@ public class Caminhao {
           Buf[5] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 6) {
+            return espaco7(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[5] < qtdemax) { //Se o buffer nao esta cheio
@@ -436,7 +448,9 @@ public class Caminhao {
           Buf[6] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 7) {
+            return espaco8(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[6] < qtdemax) { //Se o buffer nao esta cheio
@@ -474,7 +488,9 @@ public class Caminhao {
           Buf[7] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 8) {
+            return espaco9(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[7] < qtdemax) { //Se o buffer nao esta cheio
@@ -512,7 +528,9 @@ public class Caminhao {
           Buf[8] = 0;
         }
       } else { //Se o buffer esta vazio
-        return false;
+        if (pessoas > 9) {
+            return espaco10(P);
+          }
       }
     } else { //Em cima do caminhao
       if (Buf[8] < qtdemax) { //Se o buffer nao esta cheio

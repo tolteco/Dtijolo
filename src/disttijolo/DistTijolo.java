@@ -37,7 +37,7 @@ public class DistTijolo {
       System.out.println("Erro - Valor Invalido.");
       return;
     }
-    System.out.println("Quantidade total de pessoas:");
+    System.out.println("Quantidade total de pessoas: (>2)");
     qtdetotal = input.nextInt();
     if (qtdetotal <= 0) {
       System.out.println("Erro - Valor Invalido.");

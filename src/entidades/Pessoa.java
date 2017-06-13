@@ -129,19 +129,19 @@ public class Pessoa extends Thread implements Runnable {
   }
 
   private int descansa() {
-    int T = 0;
+    int T;
     switch (TIME) {
       case 0:
         //0.1 ~ 1.1
-        T = (int) (randomGenerator.nextDouble() * 1000) + 1;
+        T = (int) (((randomGenerator.nextDouble() * 1000) + 1) * velocidade);
         break;
       case 1:
         //1 ~ 3
-        T = (randomGenerator.nextInt(2) + 1) * 1000;
+        T = (int) (((randomGenerator.nextInt(2) + 1) * velocidade) * 1000);
         break;
       default:
         //3 ~ 5
-        T = (randomGenerator.nextInt(2) + 3) * 1000;
+        T = (int) (((randomGenerator.nextInt(2) + 3) * velocidade) * 1000);
         break;
     }
     return T;

@@ -22,7 +22,7 @@ public class Supervisor extends Thread implements Runnable {
   public static ArrayList<Pessoa> cima = new ArrayList();
   public static ArrayList<Pessoa> baixo = new ArrayList();
   public static int[] recemtrocado = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  boolean trabalhar1, trabalhar2, trabalhar = true;
+  boolean trabalhar1, trabalhar2;
   Caminhao C;
 
   @Override
@@ -82,16 +82,19 @@ public class Supervisor extends Thread implements Runnable {
       return;
     }
     //Comeca a trabalhar
-    while (trabalhar) {
+    while (C.trabalha) {
       int T = descansa();
       try {
         TimeUnit.MILLISECONDS.sleep(T); //Para milisegundos
       } catch (InterruptedException ex) {
         Logger.getLogger(Supervisor.class.getName()).log(Level.SEVERE, null, ex);
       }
+      //System.out.println("Buffers abaixo");
       trabalhar1 = olhaBuffersSobre();
+      //System.out.println("Buffers acima");
       trabalhar2 = olhaBuffersAbaixo();
-      trabalhar = trabalhar1 | trabalhar2;
+      //System.out.println("Oxe!");
+      C.trabalha = trabalhar1 | trabalhar2;
       C.imprime(baixo.size());
       System.out.println("Tot: " + Arrays.toString(C.Tot) + ". Tij: " + Arrays.toString(C.Tij));
       //System.out.println("Cima: " + cima);
@@ -100,6 +103,7 @@ public class Supervisor extends Thread implements Runnable {
       Thread.yield(); //Forca a troca de contexto
     }
     C.imprime(baixo.size());
+    System.out.println("FIM");
   }
 
   public Supervisor(Caminhao _C) {
@@ -134,7 +138,7 @@ public class Supervisor extends Thread implements Runnable {
         if (C.Tij[i - 1] == 0) { //Sem mais tijolos
           int E = procuraEspacoC();
           if (E == -1){ //Deu algum erro e ja devia ter parado
-            trabalhar = false;
+            C.trabalha = false;
           } else { //Tem algum espaco
             poeTrabalhadores(E);
           }
@@ -238,6 +242,7 @@ public class Supervisor extends Thread implements Runnable {
   private void colocaPessoas(int SU, int i) {
     int T = 0;
     while (SU < ((qtdetotal / C.pessoas) - 1)) { //Enquanto nao tem pessoas que chegue
+      //System.out.println("Loop");
       if (baixo.get(T).espaco != -i) {
         baixo.get(T).espaco = -i;
         SU++;
@@ -329,6 +334,7 @@ public class Supervisor extends Thread implements Runnable {
     int T = 0;
     Collections.shuffle(baixo);
     while (SU < ((qtdetotal / C.pessoas) - 1)) { //Enquanto nao tem pessoas que chegue
+      //System.out.println("Loop!");
       if (baixo.get(T).espaco != -E) {
         baixo.get(T).espaco = -E;
         SU++;

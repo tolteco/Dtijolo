@@ -103,6 +103,11 @@ public class Supervisor extends Thread implements Runnable {
       Thread.yield(); //Forca a troca de contexto
     }
     C.imprime(baixo.size());
+    int Contagem = 0;
+    for (int i = 0; i < 10; i++) {
+      Contagem += C.Con[i];
+    }
+    System.out.println("Contagem final de acessos a buffer: " + Contagem);
     System.out.println("FIM");
   }
 

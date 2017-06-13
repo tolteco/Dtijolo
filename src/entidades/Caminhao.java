@@ -14,6 +14,7 @@ public class Caminhao {
   public int[] Tij = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   public int[] Tot = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   public int[] Buf = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  public int[] Con = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   public int pessoas;
   public int qtdemax;
   public int qtdetijolos;
@@ -193,6 +194,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco1(Pessoa P) {
+    Con[0] = Con[0] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[0] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -244,6 +246,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco2(Pessoa P) {
+    Con[1] = Con[1] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[1] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -295,6 +298,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco3(Pessoa P) {
+    Con[2] = Con[2] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[2] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -346,6 +350,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco4(Pessoa P) {
+    Con[3] = Con[3] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[3] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -397,6 +402,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco5(Pessoa P) {
+    Con[4] = Con[4] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[4] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -448,6 +454,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco6(Pessoa P) {
+    Con[5] = Con[5] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[5] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -499,6 +506,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco7(Pessoa P) {
+    Con[6] = Con[6] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[6] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -550,6 +558,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco8(Pessoa P) {
+    Con[7] = Con[7] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[7] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -601,6 +610,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco9(Pessoa P) {
+    Con[8] = Con[8] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[8] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
@@ -652,6 +662,7 @@ public class Caminhao {
    * @return
    */
   public synchronized boolean espaco10(Pessoa P) {
+    Con[9] = Con[9] + 1; //Incrementa contador para acessos finais
     if (P.espaco < 0) { //Em baixo do caminhao
       if (Buf[9] > 0) { //Se tem tijolos no buffer
         int Q = randomGenerator.nextInt(P.qtdepvez);
